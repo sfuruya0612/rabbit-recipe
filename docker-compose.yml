@@ -1,34 +1,67 @@
-version: '3.7'
+version: "3.7"
+
+networks:
+  app_default:
+    driver: "bridge"
+
+volumes:
+  storage:
+    driver: "local"
 
 services:
   front:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    ports:
-      - '3000:3000'
     command: sh -c "yarn start"
-    volumes:
-      - ./frontend:/app
+    links:
+      - proxy
+    networks:
+      - app_default
+    ports:
+      - "3000:3000"
     stdin_open: true
+    # volumes:
+    #   - ./frontend:/app
+
+  proxy:
+    command: sh -c "/usr/local/bin/envoy -c /usr/local/etc/envoy.yaml -l debug"
+    image: envoyproxy/envoy-alpine:v1.14.1
+    links:
+      - api
+    networks:
+      - app_default
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./config/envoy.yaml:/usr/local/etc/envoy.yaml
 
   api:
-    depends_on:
-      - mysql
     build:
+      args:
+        - APP_NAME=${APP_NAME}
+        - ENV=${ENV}
       context: ./backend
       dockerfile: Dockerfile
+      target: build
+    command: sh -c "mix ecto.reset && mix phx.server"
+    # command: sh -c "/app/bin/rabbit_recipe eval 'RabbitRecipe.Release.migrate' && /app/bin/rabbit_recipe foreground"
+    depends_on:
+      - mysql
+    networks:
+      - app_default
     ports:
-      - '4000:4000'
-    command: sh -c "mix ecto.setup && mix phx.server"
+      - "4000:4000"
     volumes:
-      - ./backend:/app
-      - ~/.aws:/root
+      - ~/.aws:/root:ro
 
   mysql:
-    image: mysql:5.6
-    ports:
-      - '3306:3306'
     environment:
-      - MYSQL_USER=root
       - MYSQL_ROOT_PASSWORD=root
+    image: mysql:5.6.47
+    networks:
+      - app_default
+    ports:
+      - "3306:3306"
+    volumes:
+      - storage:/var/lib/mysql

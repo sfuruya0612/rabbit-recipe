@@ -3,7 +3,7 @@ use Mix.Config
 # Configure your database
 config :rabbit_recipe, RabbitRecipe.Repo,
   username: "root",
-  password: "",
+  password: "root",
   database: "rabbit_recipe_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
