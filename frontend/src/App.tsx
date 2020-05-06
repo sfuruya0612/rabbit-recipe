@@ -1,26 +1,18 @@
 import React from 'react'
-import logo from './logo.svg'
-import './App.css'
+import { ThemeProvider } from '@material-ui/core/styles'
+import { BrowserRouter } from 'react-router-dom'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  )
-}
+import configureTheme from './components/ConfigureTheme'
+import { AppLayout } from './components/AppLayout'
+
+const theme = configureTheme(process.env.NODE_ENV || 'development')
+
+const App: React.FC<{}> = (): React.ReactElement => (
+  <ThemeProvider theme={theme}>
+    <BrowserRouter>
+      <AppLayout />
+    </BrowserRouter>
+  </ThemeProvider>
+)
 
 export default App
