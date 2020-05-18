@@ -3,10 +3,10 @@ use Mix.Config
 # Configure your database
 config :rabbit_recipe, RabbitRecipe.Repo,
   adapter: Ecto.Adapters.MySQL,
-  username: "root",
-  password: "root",
+  username: System.get_env("MASTER_USERNAME"),
+  password: System.get_env("MASTER_USERPASSWORD"),
   database: "rabbit_recipe_dev",
-  hostname: "mysql",
+  hostname: System.get_env("MYSQL_HOSTNAME"),
   show_sensitive_data_on_connection_error: true,
   pool_size: 10,
   charset: "utf8"
@@ -20,9 +20,12 @@ config :rabbit_recipe, RabbitRecipe.Repo,
 config :rabbit_recipe, RabbitRecipeWeb.Endpoint,
   http: [port: 4000],
   debug_errors: true,
-  code_reloader: true,
+  code_reloader: false,
   check_origin: false,
-  watchers: []
+  watchers: [],
+  server: true,
+  root: ".",
+  version: Application.spec(:rabbit_recipe, :vsn)
 
 # ## SSL Support
 #

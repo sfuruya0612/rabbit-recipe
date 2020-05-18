@@ -51,5 +51,10 @@ release :rabbit_recipe do
   set applications: [
     :runtime_tools
   ]
-end
 
+  set commands: [
+    migrate: "rel/commands/migrate.sh",
+    seed: "rel/commands/seed.sh"
+  ]
+
+end

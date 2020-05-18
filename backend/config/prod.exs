@@ -1,5 +1,15 @@
 use Mix.Config
 
+# Configure your database
+config :rabbit_recipe, RabbitRecipe.Repo,
+  username: System.get_env("MASTER_USERNAME"),
+  password: System.get_env("MASTER_USERPASSWORD"),
+  database: "rabbit_recipe_prod",
+  hostname: System.get_env("MYSQL_HOSTNAME"),
+  show_sensitive_data_on_connection_error: true,
+  pool_size: 10,
+  charset: "utf8"
+
 # For production, don't forget to configure the url host
 # to something meaningful, Phoenix uses this information
 # when generating URLs.
@@ -10,8 +20,11 @@ use Mix.Config
 # which you should run after static files are built and
 # before starting your production server.
 config :rabbit_recipe, RabbitRecipeWeb.Endpoint,
-  url: [host: "example.com", port: 80],
-  cache_static_manifest: "priv/static/cache_manifest.json"
+  url: [host: "localhost", port: 4000],
+  cache_static_manifest: "priv/static/cache_manifest.json",
+  server: true,
+  root: ".",
+  version: Application.spec(:rabbit_recipe, :vsn)
 
 # Do not print debug messages in production
 config :logger, level: :info

@@ -21,20 +21,18 @@ services:
     ports:
       - "3000:3000"
     stdin_open: true
-    # volumes:
-    #   - ./frontend:/app
 
   proxy:
+    build:
+      context: ./proxy
+      dockerfile: Dockerfile
     command: sh -c "/usr/local/bin/envoy -c /usr/local/etc/envoy.yaml -l debug"
-    image: envoyproxy/envoy-alpine:v1.14.1
     links:
       - api
     networks:
       - app_default
     ports:
       - "8080:8080"
-    volumes:
-      - ./config/envoy.yaml:/usr/local/etc/envoy.yaml
 
   api:
     build:
@@ -44,8 +42,10 @@ services:
       context: ./backend
       dockerfile: Dockerfile
       target: build
-    command: sh -c "mix ecto.reset && mix phx.server"
-    # command: sh -c "/app/bin/rabbit_recipe eval 'RabbitRecipe.Release.migrate' && /app/bin/rabbit_recipe foreground"
+      # target: app
+    # command: sh -c "/app/bin/rabbit_recipe migrate && /app/bin/rabbit_recipe start"
+    # command: sh -c "/app/_build/dev/rel/rabbit_recipe/bin/rabbit_recipe migrate && /app/_build/dev/rel/rabbit_recipe/bin/rabbit_recipe foreground"
+    command: sh -c "mix ecto.reset && /app/_build/dev/rel/rabbit_recipe/bin/rabbit_recipe foreground"
     depends_on:
       - mysql
     networks:
@@ -54,10 +54,12 @@ services:
       - "4000:4000"
     volumes:
       - ~/.aws:/root:ro
+    stdin_open: true
 
   mysql:
     environment:
       - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=${APP_NAME}_${ENV}
     image: mysql:5.6.47
     networks:
       - app_default

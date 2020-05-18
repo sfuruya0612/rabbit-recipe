@@ -1,3 +1,9 @@
+admin:
+  access_log_path: "/dev/null"
+  address:
+    socket_address:
+      address: 0.0.0.0
+      port_value: 8001
 static_resources:
   listeners:
   - name: listener_0
@@ -18,7 +24,7 @@ static_resources:
               domains: ["*"]
               routes:
               - match:
-                  prefix: "/"
+                  prefix: "/api/"
                 route:
                   cluster: api_cluster
           http_filters:

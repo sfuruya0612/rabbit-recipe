@@ -4,12 +4,13 @@ ARG APP_NAME
 ARG ENV
 
 ENV MIX_ENV=${ENV} \
-    MIX_HOME=/opt/mix
+    MIX_HOME=/opt/mix \
+    MASTER_USERNAME=root \
+    MASTER_USERPASSWORD=root \
+    MYSQL_HOSTNAME=mysql
 
 RUN apk add --update --no-cache \
         openssl-dev \
-        # erlang \
-        # erlang-sasl \
         bash
 
 COPY . /app
@@ -32,8 +33,7 @@ ENV HOME=/app
 RUN apk add --update --no-cache \
         openssl \
         erlang \
-        erlang-sasl \
-        bash
+        erlang-sasl
 
 RUN mkdir /app
 WORKDIR /app
