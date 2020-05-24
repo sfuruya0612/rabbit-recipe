@@ -1,3 +1,3 @@
 #!/bin/sh
 
-release_ctl eval "RabbitRecipe.ReleaseTasks.seed/0"
+release_ctl eval --mfa "RabbitRecipe.ReleaseTasks.seed/0"

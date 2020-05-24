@@ -1,3 +1,3 @@
 #!/bin/sh
 
-release_ctl eval "RabbitRecipe.ReleaseTasks.migrate/0"
+release_ctl eval --mfa "RabbitRecipe.ReleaseTasks.migrate/0"

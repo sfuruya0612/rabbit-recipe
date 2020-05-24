@@ -39,22 +39,24 @@ services:
       args:
         - APP_NAME=${APP_NAME}
         - ENV=${ENV}
+        - MASTER_USERNAME=${MASTER_USERNAME}
+        - MASTER_USERPASSWORD=${MASTER_USERPASSWORD}
+        - MYSQL_HOSTNAME=${MYSQL_HOSTNAME}
       context: ./backend
       dockerfile: Dockerfile
-      target: build
       # target: app
-    # command: sh -c "/app/bin/rabbit_recipe migrate && /app/bin/rabbit_recipe start"
-    # command: sh -c "/app/_build/dev/rel/rabbit_recipe/bin/rabbit_recipe migrate && /app/_build/dev/rel/rabbit_recipe/bin/rabbit_recipe foreground"
-    command: sh -c "mix ecto.reset && /app/_build/dev/rel/rabbit_recipe/bin/rabbit_recipe foreground"
+      target: build
+    # command: sh -c "/app/bin/rabbit_recipe migrate && /app/bin/rabbit_recipe foreground"
+    command: sh -c "/app/_build/dev/rel/rabbit_recipe/bin/rabbit_recipe migrate && /app/_build/dev/rel/rabbit_recipe/bin/rabbit_recipe foreground"
     depends_on:
       - mysql
     networks:
       - app_default
     ports:
       - "4000:4000"
+    stdin_open: true
     volumes:
       - ~/.aws:/root:ro
-    stdin_open: true
 
   mysql:
     environment:
